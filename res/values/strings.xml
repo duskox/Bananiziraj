@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, BananizirajActivity!</string>
+	<string name="app_name">Bananiziraj</string>
+	<string name="settings">Settings</string>
+	<string name="save_and_post">Save and post</string>
+	<string name="banana_icon">Banana icon</string>
+	<string name="image_to_edit">Image to edit</string>
+	<string name="splash">Splash</string>
+	<string name="image_to_overlay">Image to overlay</string>
+	<string name="facebook">Facebook</string>
+</resources>
