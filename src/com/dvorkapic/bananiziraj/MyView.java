@@ -73,6 +73,14 @@ public class MyView extends View {
 		}
 	}
 	
+	public void resetImages() {
+		bottomBitmapPath = null;
+		topBitmap = null;
+		topBitmapScaled = null;
+		bottomBitmapScaled = null;
+		invalidate();
+	}
+	
 	public boolean setBottomImg(String imgPath, Activity a) {
 		boolean result = false;
 		
@@ -95,19 +103,11 @@ public class MyView extends View {
 		
 		int[] tmpArr = new int[14];
 		tmpArr[0] = R.drawable.osleep;
-		tmpArr[1] = R.drawable.ab;
-		tmpArr[2] = R.drawable.ac;
-		tmpArr[3] = R.drawable.ad;
-		tmpArr[4] = R.drawable.ae;
-		tmpArr[5] = R.drawable.af;
-		tmpArr[6] = R.drawable.ag;
-		tmpArr[7] = R.drawable.ah;
-		tmpArr[8] = R.drawable.ai;
-		tmpArr[9] = R.drawable.aj;
-		tmpArr[10] = R.drawable.ak;
-		tmpArr[11] = R.drawable.al;
-		tmpArr[12] = R.drawable.am;
-		tmpArr[13] = R.drawable.an;
+		tmpArr[1] = R.drawable.osleepcrvena;
+		tmpArr[2] = R.drawable.osleeppink;
+		tmpArr[3] = R.drawable.osleepplava;
+		tmpArr[4] = R.drawable.osleepzelena;
+		tmpArr[5] = R.drawable.osleepzuta;
 		
 		topBitmap = BitmapFactory.decodeResource(getResources(), tmpArr[i]);
 		if(topBitmap != null) {

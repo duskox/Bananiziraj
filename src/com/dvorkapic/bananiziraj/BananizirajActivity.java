@@ -115,19 +115,11 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 		
 		int[] tmpArr = new int[14];
 		tmpArr[0] = R.drawable.osleep64x64;
-		tmpArr[1] = R.drawable.ab;
-		tmpArr[2] = R.drawable.ac;
-		tmpArr[3] = R.drawable.ad;
-		tmpArr[4] = R.drawable.ae;
-		tmpArr[5] = R.drawable.af;
-		tmpArr[6] = R.drawable.ag;
-		tmpArr[7] = R.drawable.ah;
-		tmpArr[8] = R.drawable.ai;
-		tmpArr[9] = R.drawable.aj;
-		tmpArr[10] = R.drawable.ak;
-		tmpArr[11] = R.drawable.al;
-		tmpArr[12] = R.drawable.am;
-		tmpArr[13] = R.drawable.an;
+		tmpArr[1] = R.drawable.osleep64x64crvena;
+		tmpArr[2] = R.drawable.osleep64x64pink;
+		tmpArr[3] = R.drawable.osleep64x64plava;
+		tmpArr[4] = R.drawable.osleep64x64zelena;
+		tmpArr[5] = R.drawable.osleep64x64zuta;
 		
 		for (int i=0;i<14;i++) {
 			ImageView icoImgView = new ImageView(Singleton.getContext());
@@ -138,7 +130,8 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 				@Override
 				public void onClick(View v) {
 					if(theView.isBottomLoaded()) {
-						Toast.makeText(v.getContext(), "ID:" + v.getId(), Toast.LENGTH_SHORT).show();
+						//v.setAlpha(0.5f);
+						//Toast.makeText(v.getContext(), "ID:" + v.getId(), Toast.LENGTH_SHORT).show();
 						theView.setTopImg(v.getId());
 					}
 				}
@@ -266,6 +259,9 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.settings) {
 			startActivity(new Intent(Singleton.getContext(), SettingsActivity.class));
+		}
+		if (item.getItemId() == R.id.undo) {
+			theView.resetImages();
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
