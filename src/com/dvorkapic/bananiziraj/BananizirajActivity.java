@@ -24,11 +24,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,8 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
@@ -65,6 +63,7 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 		
 		Singleton.prefs = getPreferences(MODE_PRIVATE);
 		Singleton.setContext(this.getApplicationContext());
+		Singleton.setActivity(this);
 		Singleton.initFacebook(); //Init facebook variables.
 
 		ImageButton saveBtn = (ImageButton)findViewById(R.id.btn_save);
@@ -76,40 +75,7 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 		theView.setOnTouchListener(this);
 		
 		if(!Singleton.facebook.isSessionValid()) {
-			Singleton.facebook.authorize(this, new String[] {"publish_stream"}, new Facebook.DialogListener() {
-				@Override
-				public void onComplete(Bundle values) {
-					// TODO Auto-generated method stub
-					Log.i(Singleton.TAG, "Completed");
-					SharedPreferences.Editor editor = Singleton.prefs.edit();
-					editor.putString("access_token", Singleton.facebook.getAccessToken());
-					editor.putLong("access_expires", Singleton.facebook.getAccessExpires());
-					editor.commit();
-//					User revoked access to your app:
-//					{"error":{"type":"OAuthException","message":"Error validating access token: User 1053947411 has not authorized application 157111564357680."}}
-//
-//					OR when password changed:
-//					{"error":{"type":"OAuthException","message":"Error validating access token: The session is invalid because the user logged out."}}
-				}
-				
-				@Override
-				public void onFacebookError(FacebookError e) {
-					// TODO Auto-generated method stub
-					Log.e(Singleton.TAG, e.getMessage());
-				}
-				
-				@Override
-				public void onError(DialogError e) {
-					// TODO Auto-generated method stub
-					Log.e(Singleton.TAG, e.getMessage());
-				}
-				
-				@Override
-				public void onCancel() {
-					// TODO Auto-generated method stub
-					Log.i(Singleton.TAG, "Canceled");
-				}
-			});
+			Singleton.facebook.authorize(this, new String[] {"publish_stream"}, Singleton.fbDialogListenerCallback);
 		}
 		
 		
@@ -193,7 +159,7 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 //								}
 							}
 						} else {
-							Toast.makeText(Singleton.getContext(), "You must be loggen in to Facebook to complete this action.", Toast.LENGTH_LONG).show();
+							Toast.makeText(Singleton.getContext(), "You must be logged in to Facebook to complete this action.", Toast.LENGTH_LONG).show();
 						}
 					} else {
 						//Error saving file
@@ -249,8 +215,8 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getSupportMenuInflater();
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}

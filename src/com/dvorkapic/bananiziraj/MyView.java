@@ -99,6 +99,8 @@ public class MyView extends View {
 	
 	public boolean setTopImg(int i) {
 		boolean result = false;
+		int tmpX = 0, tmpY = 0;
+		float scaleF = 1;
 		//topBitmapPath = imgPath;
 		
 		int[] tmpArr = new int[14];
@@ -112,7 +114,21 @@ public class MyView extends View {
 		topBitmap = BitmapFactory.decodeResource(getResources(), tmpArr[i]);
 		if(topBitmap != null) {
 			result = true;
-			topBitmapScaled = Bitmap.createScaledBitmap(topBitmap, Math.round(topBitmap.getWidth() * scaleFact), Math.round(topBitmap.getHeight() * scaleFact), true);
+			if ((Math.round(topBitmap.getWidth()*scaleFact) > (bottomR.right-bottomR.left)) || (Math.round(topBitmap.getHeight()*scaleFact) > (bottomR.bottom-bottomR.top))) {
+				if (Math.round(topBitmap.getWidth()*scaleFact) > (bottomR.right-bottomR.left)) {
+					tmpX = (bottomR.right-bottomR.left)/2;
+					scaleF = tmpX/(float)topBitmap.getWidth();
+					tmpY = Math.round(topBitmap.getHeight()*scaleF);
+				}
+				if (Math.round(topBitmap.getHeight()*scaleFact) > (bottomR.bottom-bottomR.top)) {
+					tmpY = (bottomR.bottom-bottomR.top)/2;
+					scaleF = tmpY/(float)topBitmap.getHeight();
+					tmpX = Math.round(topBitmap.getWidth()*scaleF);
+				}
+				topBitmapScaled = Bitmap.createScaledBitmap(topBitmap, tmpX, tmpY, true);
+			} else {
+				topBitmapScaled = Bitmap.createScaledBitmap(topBitmap, Math.round(topBitmap.getWidth() * scaleFact), Math.round(topBitmap.getHeight() * scaleFact), true);
+			}
 		}
 		if (topBitmapScaled != null) {
 			topLoaded = true;

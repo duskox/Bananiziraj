@@ -34,36 +34,40 @@ public class SettingsActivity extends SherlockActivity {
 		fbLogout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(Singleton.facebook.isSessionValid()) {
-					//If it is valid then only option is to logout
-					Singleton.mAsyncRunner.logout(Singleton.getContext(), new AsyncFacebookRunner.RequestListener() {
-						@Override
-						public void onMalformedURLException(MalformedURLException e, Object state) {
-							Log.e(Singleton.TAG, "Logout-onMalformedURLException:" + e.getMessage());
-						}
-						@Override
-						public void onIOException(IOException e, Object state) {
-							Log.e(Singleton.TAG, "Logout-onIOException:" + e.getMessage());
-						}
-						@Override
-						public void onFileNotFoundException(FileNotFoundException e, Object state) {
-							Log.e(Singleton.TAG, "Logout-onFileNotFoundException:" + e.getMessage());
-						}
-						@Override
-						public void onFacebookError(FacebookError e, Object state) {
-							Log.e(Singleton.TAG, "Logout-onFacebookError:" + e.getMessage());
-						}
-						@Override
-						public void onComplete(String response, Object state) {
-							Log.i(Singleton.TAG, "Logout-onComplete:" + response);
-							Singleton.logoutFacebook();
-							
-						}
-					});
-					fbLogout.setText("Login");
-				} else {
-					//Otherwise login again
-				}
+//				if(Singleton.facebook.isSessionValid()) {
+//					//If it is valid then only option is to logout
+//					Singleton.mAsyncRunner.logout(Singleton.getContext(), new AsyncFacebookRunner.RequestListener() {
+//						@Override
+//						public void onMalformedURLException(MalformedURLException e, Object state) {
+//							Log.e(Singleton.TAG, "Logout-onMalformedURLException:" + e.getMessage());
+//						}
+//						@Override
+//						public void onIOException(IOException e, Object state) {
+//							Log.e(Singleton.TAG, "Logout-onIOException:" + e.getMessage());
+//						}
+//						@Override
+//						public void onFileNotFoundException(FileNotFoundException e, Object state) {
+//							Log.e(Singleton.TAG, "Logout-onFileNotFoundException:" + e.getMessage());
+//						}
+//						@Override
+//						public void onFacebookError(FacebookError e, Object state) {
+//							Log.e(Singleton.TAG, "Logout-onFacebookError:" + e.getMessage());
+//						}
+//						@Override
+//						public void onComplete(String response, Object state) {
+//							Log.i(Singleton.TAG, "Logout-onComplete:" + response);
+//							Singleton.logoutFacebook();
+//							
+//						}
+//					});
+//					fbLogout.setText("Login");
+//				} else {
+//					//Otherwise login again
+//					Singleton.initFacebook(); //Init facebook variables.
+//					if(!Singleton.facebook.isSessionValid()) {
+//						Singleton.facebook.authorize(Singleton.getActivity() , new String[] {"publish_stream"}, Singleton.fbDialogListenerCallback);
+//					}
+//				}
 			}
 		});
 	}

@@ -854,13 +854,14 @@ containing a value of this type.
         public static final int listMode=0x7f040002;
         public static final int normal=0x7f040001;
         public static final int root=0x7f040029;
-        public static final int settings=0x7f040031;
+        public static final int setting2=0x7f040030;
+        public static final int settings=0x7f040032;
         public static final int showCustom=0x7f040008;
         public static final int showHome=0x7f040005;
         public static final int showTitle=0x7f040007;
         public static final int tabMode=0x7f040003;
         public static final int the_view=0x7f04002a;
-        public static final int undo=0x7f040030;
+        public static final int undo=0x7f040031;
         public static final int useLogo=0x7f040004;
         public static final int wrap_content=0x7f040000;
     }
