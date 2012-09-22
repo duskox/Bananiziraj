@@ -237,7 +237,11 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 		//Image from camera, using string path to image.
 		if (requestCode == Singleton.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
-				if(picPath != "") {
+				//Bitmap image = BitmapFactory.decodeFile(data.getExtras().get(MediaStore.Images.Media.TITLE).toString());
+				if (data != null) {
+					picPath = data.getExtras().get(MediaStore.Images.Media.TITLE).toString();
+				}
+				if(picPath != "" && picPath != null) {
 					theView.setBottomImg(picPath, BananizirajActivity.this);
 				}
 			} else if (resultCode == RESULT_CANCELED) {
@@ -287,52 +291,56 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 		boolean multiTouch = false;
 		
 		if (event.getPointerCount() > 1) multiTouch = true;
+		if (multiTouch) {
+			
+		}
 		
 		theView.getDrawingRect(canvasRect);
 		theView.getLocationOnScreen(location);
 		
-		switch (event.getAction() & MotionEvent.ACTION_MASK) {
-		case MotionEvent.ACTION_DOWN:
-			if (rt != null) {
-				xDeltaL = X - location[0] - rt.left;
-				xDeltaR = X - location[0] - rt.right;
-				yDeltaT = Y - location[1] - rt.top;
-				yDeltaB = Y - location[1] - rt.bottom;
-				if (rt.contains(X - location[0], Y - location[1])) {
-					moveTopRect = true;
+		if(theView.isBottomLoaded() && theView.isTopLoaded()) {
+			switch (event.getAction() & MotionEvent.ACTION_MASK) {
+			case MotionEvent.ACTION_DOWN:
+				if (rt != null) {
+					xDeltaL = X - location[0] - rt.left;
+					xDeltaR = X - location[0] - rt.right;
+					yDeltaT = Y - location[1] - rt.top;
+					yDeltaB = Y - location[1] - rt.bottom;
+					if (rt.contains(X - location[0], Y - location[1])) {
+						moveTopRect = true;
+					}
 				}
-			}
-			setTextCoord(X - location[0],Y - location[1],yDeltaT, yDeltaB, xDeltaL, xDeltaR);
-			break;
-		case MotionEvent.ACTION_UP:
-			moveTopRect = false;
-			break;
-		case MotionEvent.ACTION_POINTER_DOWN:
-			break;
-		case MotionEvent.ACTION_POINTER_UP:
-			break;
-		case MotionEvent.ACTION_MOVE:
-			if (moveTopRect && rb != null) {
-				if (rb.contains(X - location[0] - xDeltaL, Y - location[1] - yDeltaT, X - location[0] - xDeltaR, Y - location[1] - yDeltaB)) {
-					rt.top = Y - location[1] - yDeltaT;
-					rt.left = X - location[0] - xDeltaL;
-					rt.bottom = Y - location[1] - yDeltaB;
-					rt.right = X - location[0] - xDeltaR;
-					theView.setTopPosition(rt);
+				setTextCoord(X - location[0],Y - location[1],yDeltaT, yDeltaB, xDeltaL, xDeltaR);
+				break;
+			case MotionEvent.ACTION_UP:
+				moveTopRect = false;
+				break;
+			case MotionEvent.ACTION_POINTER_DOWN:
+				break;
+			case MotionEvent.ACTION_POINTER_UP:
+				break;
+			case MotionEvent.ACTION_MOVE:
+				if (moveTopRect && rb != null) {
+					if (rb.contains(X - location[0] - xDeltaL, Y - location[1] - yDeltaT, X - location[0] - xDeltaR, Y - location[1] - yDeltaB)) {
+						rt.top = Y - location[1] - yDeltaT;
+						rt.left = X - location[0] - xDeltaL;
+						rt.bottom = Y - location[1] - yDeltaB;
+						rt.right = X - location[0] - xDeltaR;
+						theView.setTopPosition(rt);
+					}
 				}
-				
+				setTextCoord(X,Y,rt.top, rt.bottom, rt.left, rt.right);
+				break;
 			}
-			setTextCoord(X,Y,rt.top, rt.bottom, rt.left, rt.right);
-			break;
 		}
 		return true;
 	}
 	
 	public String getPath(Uri uri) {
 		String[] projection = { MediaStore.Images.Media.DATA };
-		//Cursor cursor = managedQuery(uri, projection, null, null, null);
-		CursorLoader cl = new CursorLoader(Singleton.getContext(), uri, projection, null, null, null);
-		Cursor cursor = cl.loadInBackground();
+		Cursor cursor = managedQuery(uri, projection, null, null, null);
+		//CursorLoader cl = new CursorLoader(Singleton.getContext(), uri, projection, null, null, null);
+		//Cursor cursor = cl.loadInBackground();
 		if(cursor!=null) {
 			//HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
 			//THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
@@ -378,7 +386,7 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 	
 	private void setTextCoord(int x, int y, int rt, int rb, int rl, int rr) {
 		TextView tv = (TextView)findViewById(R.id.comment_box);
-		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) theView.getLayoutParams();
+		//RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) theView.getLayoutParams();
 		
 		int location[] = new int[2];
 		theView.getLocationOnScreen(location);
@@ -386,7 +394,10 @@ public class BananizirajActivity extends SherlockActivity implements View.OnTouc
 		//getWindowManager().getDefaultDisplay().getMetrics(om);
 		//tv.setText("X:" + x + " Y:" + y + " LM:" + lm + " RM:" + rm + " TM:" + tm + " BM:" + bm);
 		//tv.setText("LM:" + lm + " RM:" + rm + " TM:" + tm + " BM:" + bm);
-		tv.setText("X:" + x + " Y:" + y + "RT:" + rt + "RB:" + rb + "RL:" + rl + "RR:" + rr);
+		//tv.setText("X:" + x + " Y:" + y + "RT:" + rt + "RB:" + rb + "RL:" + rl + "RR:" + rr);
+		if (theView != null) {
+			tv.setText("SF:" + theView.getScaleFactor() + " DF:" + theView.getDeltaFactor());
+		}
 		//tv.setText("X:" + x + " Y:" + y + " RT:" + canvasRect.top + " RB:" + canvasRect.bottom + " RL:" + canvasRect.left + " RR:" + canvasRect.right);
 		//tv.setText("X:" + x + " Y:" + y + " H:" + lp.height + " W:" + lp.width + " L0:" + location[0] + " L1:" + location[1]);
 	}

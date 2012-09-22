@@ -22,14 +22,18 @@ import android.util.Log;
 import android.view.View;
 
 public class MyView extends View {
-	private Bitmap bgBitmap = null;
-	private Bitmap bottomBitmap = null;
-	private Bitmap topBitmap = null;
-	private Bitmap bottomBitmapScaled = null;
-	private Bitmap topBitmapScaled = null;
-	private String bottomBitmapPath = "";
-	private String topBitmapPath = "";
+	private Bitmap bgBitmap = null; //background pic
+	private Bitmap bottomBitmap = null; //bottom image, 800px larger side
+	private Bitmap topBitmap = null; //top image
+	private Bitmap bottomBitmapScaled = null; //scaled to fit the screen
+	private Bitmap topBitmapScaled = null; //scaled to fit the bottomBitmapScaled
+	private String bottomBitmapPath = ""; //path passed to this object that represents cam or gallery image
+	
 	private float scaleFact = 1;
+	float deltaFactor = 1.0f;
+	Paint p = new Paint();
+	Bitmap scaled;
+	Rect canvasRect = null;
 	
 	private boolean bottomLoaded = false;
 	private boolean topLoaded = false;
@@ -38,37 +42,37 @@ public class MyView extends View {
 	
 	private Activity act;
 	
-	private boolean blue = false;
-	
 	public MyView(Context context, AttributeSet set) {
 		super(context, set);
 		
 		bgBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pozadina480x480);
+		
+	}
+	
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		canvasRect = new Rect(0,0,getWidth(),getHeight());
+		super.onSizeChanged(w, h, oldw, oldh);
 	}
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		Bitmap scaled;
-		Paint p = new Paint();
+		
+		
 		p.setARGB(100, 255, 0, 0);
 		
 		//Draw background
-		scaled = Bitmap.createScaledBitmap(bgBitmap, getWidth(), getHeight(), true);
-		canvas.drawBitmap(scaled, 0, 0, null);
+		canvas.drawBitmap(bgBitmap,null, canvasRect,null);
 		
 		//Draw bottom Image if loaded
 		if(bottomBitmapScaled != null) {
 			canvas.drawBitmap(bottomBitmapScaled, ((getWidth() - bottomBitmapScaled.getWidth())/2), ((getHeight() - bottomBitmapScaled.getHeight())/2), null);
-			//if (bottomR != null) canvas.drawRect(bottomR, p);
 		}
 		
 		//Draw top Image if loaded
 		if(topBitmapScaled != null) {
 			if (topR != null) {
-			canvas.drawBitmap(topBitmapScaled, null, topR, null);
-			if (blue) p.setARGB(100, 0, 0, 255);
-			else p.setARGB(100, 255, 0, 0);
-			//canvas.drawRect(topR, p);
+				canvas.drawBitmap(topBitmapScaled, null, topR, null);
 			}
 		}
 	}
@@ -133,11 +137,14 @@ public class MyView extends View {
 		if (topBitmapScaled != null) {
 			topLoaded = true;
 			if(topR == null) topR = new Rect();
-			topR.left = 100;
-			topR.top = 100;
-			topR.right = 100 + topBitmapScaled.getWidth();
-			topR.bottom = 100 + topBitmapScaled.getHeight();
+			topR.left = bottomR.centerX() - topBitmapScaled.getWidth()/2;
+			topR.top = bottomR.centerY() - topBitmapScaled.getHeight()/2;
+			topR.right = topR.left + topBitmapScaled.getWidth();
+			topR.bottom = topR.top + topBitmapScaled.getHeight();
 		}
+		
+		
+		
 		invalidate();
 		return result;
 	}
@@ -163,14 +170,12 @@ public class MyView extends View {
 		invalidate();
 	}
 	
-	public void setBlue() {
-		blue = true;
-		invalidate();
+	public float getScaleFactor() {
+		return scaleFact;
 	}
 	
-	public void setRed() {
-		blue = false;
-		invalidate();
+	public float getDeltaFactor() {
+		return deltaFactor;
 	}
 	
 	public boolean savePic(Uri fileUri) {
@@ -188,10 +193,13 @@ public class MyView extends View {
 //		}
 		
 		Canvas tmpCanvas = new Canvas(b);
-		//tmpCanvas.setBitmap(b);
+		
+		float hs = b.getHeight()/bottomBitmapScaled.getHeight();
+		float ws = b.getWidth()/bottomBitmapScaled.getWidth();
 		
 		tmpCanvas.drawBitmap(bottomBitmap, 0, 0, null);
-		Rect tmpRect = new Rect(Math.round((topR.left)*scaleFact), Math.round((topR.top)*scaleFact), Math.round((topR.right)*scaleFact), Math.round((topR.bottom)*scaleFact));
+		//Rect tmpRect = new Rect(Math.round((topR.left)*scaleFact), Math.round((topR.top)*scaleFact), Math.round((topR.right)*scaleFact), Math.round((topR.bottom)*scaleFact));
+		Rect tmpRect = new Rect(Math.round((topR.left)*ws), Math.round((topR.top)*hs), Math.round((topR.right)*ws), Math.round((topR.bottom)*hs));
 		tmpCanvas.drawBitmap(topBitmap, null, tmpRect, null);
 		
 		try {
@@ -319,15 +327,18 @@ public class MyView extends View {
 			bottomBitmap = b1;
 			bottomBitmapScaled = b2;
 			scaleFact = scaleFactor;
-			if (bottomR == null) bottomR = new Rect();
-			bottomR.left = (getWidth() - bottomBitmapScaled.getWidth())/2;
-			bottomR.top = (getHeight() - bottomBitmapScaled.getHeight())/2;
-			bottomR.right = bottomR.left + bottomBitmapScaled.getWidth();
-			bottomR.bottom = bottomR.top + bottomBitmapScaled.getHeight();
-			d.dismiss();
-			d = null;
-			bottomLoaded = true;
-			invalidate();
+			deltaFactor = bottomBitmap.getHeight() / bottomBitmapScaled.getHeight();
+			if (b1 != null && b2 != null) {
+				if (bottomR == null) bottomR = new Rect();
+				bottomR.left = (getWidth() - bottomBitmapScaled.getWidth())/2;
+				bottomR.top = (getHeight() - bottomBitmapScaled.getHeight())/2;
+				bottomR.right = bottomR.left + bottomBitmapScaled.getWidth();
+				bottomR.bottom = bottomR.top + bottomBitmapScaled.getHeight();
+				d.dismiss();
+				d = null;
+				bottomLoaded = true;
+				invalidate();
+			}
 			super.onPostExecute(result);
 		}
 	}
